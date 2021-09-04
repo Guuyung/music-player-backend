@@ -1,6 +1,8 @@
 package com.ygl.mymusic.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ygl.mymusic.common.Result;
 import com.ygl.mymusic.entity.Users;
 import com.ygl.mymusic.service.IUsersService;
@@ -16,11 +18,12 @@ public class adminController {
     IUsersService userservice;
 
     @RequestMapping("/getusers")
-    public Result getUsers()
+    public Result getUsers(@RequestParam(defaultValue = "1",name = "current") Integer currentPage)
     {
-        List<Users> list=userservice.list();
-        if(list==null)return Result.fail("获取失败");
-        return Result.succ(list);
+        Page page = new Page(currentPage, 5);
+        IPage<Users> usersIPage=userservice.page(page);
+
+        return Result.succ(usersIPage);
     }
 
 

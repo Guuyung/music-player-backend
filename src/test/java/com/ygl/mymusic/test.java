@@ -29,9 +29,17 @@ public class test {
     @Test
     public void f()
     {
+    List<Integer>a=new ArrayList<>();
+    a.add(2);
+    a.add(3);
+    a.add(4);
+    a.add(7);
+    a.add(6);
+    a.add(5);
+        int cur=2,size=5;
+        a.subList((cur-1)*size,cur*size);
 
-        iSongsService.
-                update(new Songs("cg","unkonw"),new QueryWrapper<Songs>().eq("id",9));
+
     }
 
 

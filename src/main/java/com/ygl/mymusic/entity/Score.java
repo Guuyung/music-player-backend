@@ -21,12 +21,12 @@ public class Score implements Serializable {
     /**
      * 歌曲Id
      */
-    private Integer songid;
+    private int songid;
 
     /**
      * 评论用户Id
      */
-    private Integer userid;
+    private int userid;
 
 
 

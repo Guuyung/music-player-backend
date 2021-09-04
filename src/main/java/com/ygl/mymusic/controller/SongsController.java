@@ -2,11 +2,15 @@ package com.ygl.mymusic.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ygl.mymusic.common.Mypage;
 import com.ygl.mymusic.common.Result;
 import com.ygl.mymusic.common.dto.CommentDto;
 import com.ygl.mymusic.entity.Comment;
 import com.ygl.mymusic.entity.Score;
 import com.ygl.mymusic.entity.Songs;
+import com.ygl.mymusic.entity.Users;
 import com.ygl.mymusic.service.ICommentService;
 import com.ygl.mymusic.service.IScoreService;
 import com.ygl.mymusic.service.ISongsService;
@@ -38,21 +42,33 @@ public class SongsController {
     IScoreService iScoreService;
 
     /**
-     *查询歌曲及评论
+     *查询某首歌曲及评论,评论有多个分页
      * @author ygl
      * @date
      * @param
      * @return
      */
     @RequestMapping("/song/{id}")
-    public Result getSongAndComment(@PathVariable(name = "id")int id)
+    public Result getSongAndComment(@PathVariable(name = "id")int id,
+                                    @RequestParam(defaultValue = "1",name = "current") Integer currentPage)
     {
-        Songs songs=iSongsService.getById(id);
-        if(songs==null)
+
+
+
+        Songs song=iSongsService.getById(id);
+        if(song==null)
             return Result.fail("查询不到该歌曲");
+
         Map res=new HashMap<>();
-        res.put("song",songs);
-       res.put("comments",iCommentService.list(new QueryWrapper<Comment>().eq("songid",id)));
+        res.put("song",song);
+
+
+        Page page = new Page(currentPage, 5);
+        IPage<Users> usersIPage=
+                iCommentService.page(page,new QueryWrapper<Comment>().eq("songid",id));
+
+
+        res.put("comments",usersIPage);
 
        return Result.succ(res);
     }
@@ -105,8 +121,11 @@ public class SongsController {
      */
 
     @RequestMapping("/search")
-    public Result search(@RequestParam(name = "songname")String songname)
+    public Result search(@RequestParam(name = "songname")String songname
+               ,@RequestParam(defaultValue = "1",name = "current")
+                                     Integer currentPage        )
     {
+
         List<Songs> res=new LinkedList<>();
         List<Songs> correct=
                 iSongsService.list(new QueryWrapper<Songs>().eq("songname",songname));
@@ -130,7 +149,9 @@ public class SongsController {
         LinkedHashSet<Songs> hashSet = new LinkedHashSet<>(res);
         ArrayList<Songs> listWithoutDuplicates = new ArrayList<>(hashSet);
 
-        return Result.succ(listWithoutDuplicates);
+
+
+        return Result.succ(Mypage.getPage(currentPage,5,listWithoutDuplicates));
     }
 
     /**
@@ -187,6 +208,31 @@ public class SongsController {
 
     }
 
+    /**
+     *  获取歌曲评分,总共有5分，返回每一分的人数及统计结果
+     * @author ygl
+     * @date
+     * @param
+     * @return
+     */
 
+    @RequestMapping("/getscorelist/{id}")
+    public Result getscorelist(@PathVariable int id)
+    {
+        List<Score> scores=iScoreService.list(new QueryWrapper<Score>().eq("songid",id));
+        int []s=new int[6];
+        int sum=0;
+        for(Score score:scores)
+        {
+            sum+=score.getScore();
+//            每个数组的位置对于的分数数量
+            s[score.getScore()]++;
+        }
+        sum/=scores.size();
+        Map<String,Object>res=new HashMap<>();
+        res.put("ave",sum);
+        res.put("scores",s);
+        return Result.succ(res);
+    }
 
 }

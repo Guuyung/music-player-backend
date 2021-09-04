@@ -2,8 +2,11 @@ package com.ygl.mymusic.entity;
 
 import java.time.LocalDate;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -15,6 +18,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Message implements Serializable {
 
     private int id;
@@ -22,26 +27,33 @@ public class Message implements Serializable {
     /**
      * 来自谁id的信息
      */
-    private Integer from;
+    private int fromid;
 
     /**
      * 给谁的id
      */
-    private Integer to;
+    private int toid;
 
     /**
      * 留言内容
      */
     private String content;
 
+
+
     /**
      * 评论时间
      */
-    private LocalDate time;
+    private String time;
 
     private String mark1;
 
     private String mark2;
-
+    public Message(int fromid, int to, String content, String time) {
+        this.fromid = fromid;
+        this.toid = to;
+        this.content = content;
+        this.time = time;
+    }
 
 }

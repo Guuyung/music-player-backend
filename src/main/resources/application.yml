@@ -8,17 +8,8 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-  redis:
-    host: localhost
-    port: 6379
-    jedis:
-      pool:
-        max-active: 8
-        max-wait: -1
-        min-idle: 0
-    password:
-  resources:
     static-locations: classpath:static
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -30,9 +21,4 @@ mybatis:
   configuration:
     cache-enabled: true
 
-# 分页配置
-pagehelper:
-  helperDalect: mysql
-  reasonable: true
-  supportMethodsArguments: true
-  params: conut=countSql
+

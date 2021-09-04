@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public interface LikesongsMapper extends BaseMapper<Likesongs> {
-    @Select("select  s.songname , s.singer,s.url,s.cover from songs s ,\n" +
+    @Select("select  s.songname ,s.id , s.singer,s.url,s.cover from songs s ,\n" +
             " (select songid from collection c where userid =#{id}) t where t.songid=s.id;")
     public List<Likesongs> getSongs(int id);
 
